@@ -1,0 +1,6 @@
+{
+    "token": "",
+    "logPath": "log.md",
+    "pythonPath": "main.py",
+    "executablePath": "run.bat"
+}

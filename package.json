@@ -1,0 +1,17 @@
+{
+  "name": "skool",
+  "version": "3.1.1",
+  "description": "A tool to help NNNI get my fricking code faster",
+  "main": "get.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rad"
+  ],
+  "author": "Skaytacium",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11"
+  }
+}
