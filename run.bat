@@ -1,3 +1,3 @@
 @ECHO OFF
-node get.js
+node src/get.js
 PAUSE   

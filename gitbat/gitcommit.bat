@@ -1,4 +1,4 @@
 @ECHO OFF
-git add .
+git add ..
 git commit
 PAUSE
