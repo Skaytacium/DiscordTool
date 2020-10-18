@@ -1,10 +1,10 @@
 {
-    "token": "MzI0NDY4ODg2MzU3NTQwODY1.X4Vamg.N6ws4El_LACubSWicmsjmbP3KEU",
+    "token": "",
     "logPath": "log.md",
     "pythonPath": "main.py",
     "executablePath": "run.bat",
     "defaultWriteFile": "main.py",
-    "defaultImageFolder": "C:/Users/Sid K/Nationals/Assets/Sprites",
+    "defaultImageFolder": "",
     "userID": [
         "566904780405080064",
         "324468886357540865"
