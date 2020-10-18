@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
-const config = require('./config.json');
+const config = require('../config.json');
 const fs = require('fs');
+const https = require('https');
 const child = require('child_process');
 const rl = require('readline').createInterface({
     input: process.stdin,
@@ -14,7 +15,7 @@ client.login(config.token);
 var exetype = "";
 
 function getExecType() {
-    rl.question("\n1: python\n2: python with cmd\n3: write to file\n4: write to file and make run.bat\n5: clear log\n", ans => {
+    rl.question("\n1: python\n2: python with cmd\n3: write to file\n4: write to file and make run.bat\n5: clear log\n6: download images\n", ans => {
         console.log(`\nRecieved option ${ans}`);
         if (ans == "5") truncateLog();
         else exetype = ans;
@@ -61,44 +62,68 @@ rl.on('line', termput => {
 });
 
 client.on('message', msg => {
-    if (msg.author.id == "324468886357540865" && msg.content.indexOf("```") == 0)
+    if (config.userID.includes(msg.author.id)) {
         if (exetype != undefined || "" || null) {
             fs.appendFile(config.logPath, `\n\n### [${Date().toString()}]\n\n***---Command---***\n\n#### Type: ${exetype}\n\n${msg.content.slice(3, -3)}\n`, err => {
                 if (err) throw err;
-                switch (exetype) {
-                    case "1":
-                        python(msg);
-                        break;
-                    case "2":
-                        exec('main.py', true);
-                        cmd(msg, false);
-                        break;
-                    case "3":
-                        receive(msg.content);
-                        break;
-                    case "4":
-                        receive(msg.content).then(ans => {
-                            exec(ans, false);
+                if (msg.content.indexOf('```') == 0 && exetype != "6") {
+                    switch (exetype) {
+                        case "1":
+                            python(msg);
+                            break;
+                        case "2":
+                            exec('main.py', true);
+                            cmd(msg, false);
+                            break;
+                        case "3":
+                            receive(msg.content);
+                            break;
+                        case "4":
+                            receive(msg.content).then(ans => {
+                                exec(ans, false);
+                            });
+                            break;
+                    }
+                } else if (exetype == "6") {
+                    rl.question(`\n---Received---\n\nWhich folder to save it to? (Leave blank for file path in config.json)  `, ans => {
+                        msg.attachments.forEach(item => {
+                            image(item.url, (ans == "" ? config.defaultImageFolder : ans), item.filename);
                         });
-                        break;
+                    });
                 }
             });
         } else {
             console.log("Didn't receive an exec type!\n");
         }
+    }
 });
 
 async function receive(content) {
     return new Promise(res => {
-        rl.question(`\n---Received---\n\nWhich file to write to?  `, ans => {
+        rl.question(`\n---Received---\n\nWhich file to write to? (Leave blank for file path in config.json)  `, ans => {
             fs.appendFile(config.logPath, `\n#### File: ${ans}`, err0 => {
                 if (err0) throw err0;
                 console.log('\n---Log---\n\nLogged, Writing to file...');
-                fs.writeFile(ans, content.slice(3, -3), err => {
+                fs.writeFile((ans == "" ? config.defaultWriteFile : ans), content.slice(3, -3), err => {
                     if (err) throw err;
                     console.log("Wrote to file " + ans);
                     res(ans);
                 });
+            });
+        });
+    });
+}
+
+function image(url, path, name) {
+    const filename = `${path}/${name}`;
+    fs.appendFile(config.logPath, `\n#### File: ${filename}`, err0 => {
+        if (err0) throw err0;
+        console.log("\n---Log---\n\nLogged, Writing to file...");
+        fs.writeFileSync(filename, "");
+        let file = fs.createWriteStream(filename);
+        https.get(url, response => {
+            response.pipe(file).end(() => {
+                console.log(`Wrote to ${filename}`);
             });
         });
     });
