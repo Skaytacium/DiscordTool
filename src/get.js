@@ -85,7 +85,8 @@ client.on('message', msg => {
                             break;
                     }
                 } else if (exetype == "6") {
-                    rl.question(`\n---Received---\n\nWhich folder to save it to? (Leave blank for file path in config.json)  `, ans => {
+                    rl.question(`\n---Received---\n\nWhich folder to save it to? (Leave blank for file path in config.json, enter F to cancel)  `, ans => {
+                        if (ans == "F") return;
                         msg.attachments.forEach(item => {
                             image(item.url, (ans == "" ? config.defaultImageFolder : ans), item.filename);
                         });
@@ -100,7 +101,8 @@ client.on('message', msg => {
 
 async function receive(content) {
     return new Promise(res => {
-        rl.question(`\n---Received---\n\nWhich file to write to? (Leave blank for file path in config.json)  `, ans => {
+        rl.question(`\n---Received---\n\nWhich file to write to? (Leave blank for file path in config.json, enter F to cancel)  `, ans => {
+            if (ans == "F") return;
             fs.appendFile(config.logPath, `\n#### File: ${ans}`, err0 => {
                 if (err0) throw err0;
                 console.log('\n---Log---\n\nLogged, Writing to file...');
@@ -122,9 +124,8 @@ function image(url, path, name) {
         fs.writeFileSync(filename, "");
         let file = fs.createWriteStream(filename);
         https.get(url, response => {
-            response.pipe(file).end(() => {
-                console.log(`Wrote to ${filename}`);
-            });
+            response.pipe(file);
+            console.log("Wrote to file " + filename);
         });
     });
 }
