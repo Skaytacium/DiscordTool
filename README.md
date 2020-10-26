@@ -1,5 +1,5 @@
 # DiscordTool
-## A discord tool I made to get code directly and run it, store it and has logging features
+## A discord tool I made to get code directly from a message, run it and/or store it with logging features
 
 ### Features
 Running python, running python from bat, storing any code in any file, logging, making executables for stored code
